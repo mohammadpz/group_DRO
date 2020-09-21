@@ -103,6 +103,7 @@ def train(model, criterion, dataset,
         step_size=args.robust_step_size,
         normalize_loss=args.use_normalized_loss,
         btl=args.btl,
+        sp=args.sp,
         min_var_weight=args.minimum_variational_weight)
 
     # BERT uses its own scheduler and optimizer
@@ -123,11 +124,17 @@ def train(model, criterion, dataset,
             warmup_steps=args.warmup_steps,
             t_total=t_total)
     else:
-        optimizer = torch.optim.SGD(
-            filter(lambda p: p.requires_grad, model.parameters()),
-            lr=args.lr,
-            momentum=0.9,
-            weight_decay=args.weight_decay)
+        if args.adam:
+            optimizer = torch.optim.Adam(
+                filter(lambda p: p.requires_grad, model.parameters()),
+                lr=args.lr,
+                weight_decay=args.weight_decay)
+        else:
+            optimizer = torch.optim.SGD(
+                filter(lambda p: p.requires_grad, model.parameters()),
+                lr=args.lr,
+                momentum=0.9,
+                weight_decay=args.weight_decay)
         if args.scheduler:
             scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
                 optimizer,

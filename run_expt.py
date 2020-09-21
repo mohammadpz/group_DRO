@@ -39,6 +39,7 @@ def main():
     parser.add_argument('--robust_step_size', default=0.01, type=float)
     parser.add_argument('--use_normalized_loss', default=False, action='store_true')
     parser.add_argument('--btl', default=False, action='store_true')
+    parser.add_argument('--sp', default=0.0, type=float)
     parser.add_argument('--hinge', default=False, action='store_true')
 
     # Model
@@ -64,6 +65,7 @@ def main():
     parser.add_argument('--save_step', type=int, default=10)
     parser.add_argument('--save_best', action='store_true', default=False)
     parser.add_argument('--save_last', action='store_true', default=False)
+    parser.add_argument('--adam', action='store_true', default=False)
 
     args = parser.parse_args()
     check_args(args)
@@ -100,7 +102,7 @@ def main():
     elif args.shift_type == 'label_shift_step':
         train_data, val_data = prepare_data(args, train=True)
 
-    loader_kwargs = {'batch_size':args.batch_size, 'num_workers':4, 'pin_memory':True}
+    loader_kwargs = {'batch_size':args.batch_size, 'num_workers':0, 'pin_memory':True}
     train_loader = train_data.get_loader(train=True, reweight_groups=args.reweight_groups, **loader_kwargs)
     val_loader = val_data.get_loader(train=False, reweight_groups=None, **loader_kwargs)
     if test_data is not None:

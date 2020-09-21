@@ -5,7 +5,7 @@ import torch.nn.functional as F
 import numpy as np
 
 class LossComputer:
-    def __init__(self, criterion, is_robust, dataset, alpha=None, gamma=0.1, adj=None, min_var_weight=0, step_size=0.01, normalize_loss=False, btl=False):
+    def __init__(self, criterion, is_robust, dataset, alpha=None, gamma=0.1, adj=None, min_var_weight=0, step_size=0.01, normalize_loss=False, btl=False, sp=0.0):
         self.criterion = criterion
         self.is_robust = is_robust
         self.gamma = gamma
@@ -14,6 +14,7 @@ class LossComputer:
         self.step_size = step_size
         self.normalize_loss = normalize_loss
         self.btl = btl
+        self.sp = sp
 
         self.n_groups = dataset.n_groups
         self.group_counts = dataset.group_counts().cuda()
