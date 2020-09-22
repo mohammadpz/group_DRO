@@ -5,7 +5,23 @@ from PIL import Image
 import numpy as np
 import torchvision.transforms as transforms
 from models import model_attributes
-from torch.utils.data import Dataset, Subset
+from torch.utils.data import Dataset
+
+
+class Subset(Dataset):
+    def __init__(self, dataset, indices):
+        self.dataset = dataset
+        self.indices = indices
+
+    def __getitem__(self, idx):
+        return self.dataset[self.indices[idx]]
+
+    def __len__(self):
+        return len(self.indices)
+
+    def get_yg(self, idx):
+        return self.dataset.get_yg(self.indices[idx])
+
 
 class ConfounderDataset(Dataset):
     def __init__(self, root_dir,
@@ -40,6 +56,12 @@ class ConfounderDataset(Dataset):
             x = img
 
         return x,y,g
+
+    def get_yg(self, idx):
+        y = self.y_array[idx]
+        g = self.group_array[idx]
+
+        return y,g
 
     def get_splits(self, splits, train_frac=1.0):
         subsets = {}

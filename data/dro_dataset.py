@@ -13,13 +13,8 @@ class DRODataset(Dataset):
         group_array = []
         y_array = []
 
-        i = 0
-        for x,y,g in self:
-            i += 1
-            if i % 10 == 0:
-                print(i / len(self))
-            # if i == 128:
-            #     break
+        for idx in range(len(self.dataset)):
+            y, g = self.dataset.get_yg(idx)
             group_array.append(g)
             y_array.append(y)
         self._group_array = torch.LongTensor(group_array)

@@ -5,7 +5,8 @@ from torch.utils.data import Subset
 from data.label_shift_utils import prepare_label_shift_data
 from data.confounder_utils import prepare_confounder_data
 
-root_dir = '/home/mila/p/pezeshki/GS/overparam_spur_corr'
+# root_dir = '/home/mila/p/pezeshki/GS/overparam_spur_corrf'
+# root_dir = '/home/askarihr/scratch/GS/group_DRO'
 
 dataset_attributes = {
     'CelebA': {
@@ -22,12 +23,16 @@ dataset_attributes = {
     }
 }
 
-for dataset in dataset_attributes:
-    dataset_attributes[dataset]['root_dir'] = os.path.join(root_dir, dataset_attributes[dataset]['root_dir'])
+# for dataset in dataset_attributes:
+#     dataset_attributes[dataset]['root_dir'] = os.path.join(root_dir, dataset_attributes[dataset]['root_dir'])
 
 shift_types = ['confounder', 'label_shift_step']
 
 def prepare_data(args, train, return_full_dataset=False):
+
+    for dataset in dataset_attributes:
+        dataset_attributes[dataset]['root_dir'] = os.path.join(args.data_dir, dataset_attributes[dataset]['root_dir'])
+
     # Set root_dir to defaults if necessary
     if args.root_dir is None:
         args.root_dir = dataset_attributes[args.dataset]['root_dir']
