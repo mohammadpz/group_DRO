@@ -34,7 +34,7 @@ def main():
     parser.add_argument('--val_fraction', type=float, default=0.1)
     # Objective
     parser.add_argument('--robust', default=False, action='store_true')
-    parser.add_argument('--alpha', type=float, default=0.2)
+    parser.add_argument('--alpha', type=float, default=0.01)
     parser.add_argument('--generalization_adjustment', default="0.0")
     parser.add_argument('--automatic_adjustment', default=False, action='store_true')
     parser.add_argument('--robust_step_size', default=0.01, type=float)
@@ -51,8 +51,8 @@ def main():
     parser.add_argument('--train_from_scratch', action='store_true', default=False)
 
     # Optimization
-    parser.add_argument('--n_epochs', type=int, default=4)
-    parser.add_argument('--batch_size', type=int, default=32)
+    parser.add_argument('--n_epochs', type=int, default=100)
+    parser.add_argument('--batch_size', type=int, default=128)
     parser.add_argument('--lr', type=float, default=0.001)
     parser.add_argument('--scheduler', action='store_true', default=False)
     parser.add_argument('--weight_decay', type=float, default=5e-5)
@@ -67,6 +67,8 @@ def main():
     parser.add_argument('--save_best', action='store_true', default=False)
     parser.add_argument('--save_last', action='store_true', default=False)
     parser.add_argument('--adam', action='store_true', default=False)
+    parser.add_argument('--sup', action='store_true', default=False)
+    parser.add_argument('--half', action='store_true', default=False)
 
     args = parser.parse_args()
     check_args(args)
@@ -116,14 +118,16 @@ def main():
     data['train_data'] = train_data
     data['val_data'] = val_data
     data['test_data'] = test_data
-    n_classes = train_data.n_classes
+    # n_classes = train_data.n_classes
+    n_classes = 1
 
     log_data(data, logger)
 
     ## Initialize model
     pretrained = not args.train_from_scratch
     if resume:
-        model = torch.load(os.path.join(args.log_dir, 'last_model.pth'))
+    
+        model = torch.load(os.path.join(args.log_dir, '40_model.pth'))
         d = train_data.input_size()[0]
     elif model_attributes[args.model]['feature_type'] in ('precomputed', 'raw_flattened'):
         assert pretrained
@@ -180,7 +184,9 @@ def main():
 
     if resume:
         df = pd.read_csv(os.path.join(args.log_dir, 'test.csv'))
-        epoch_offset = df.loc[len(df)-1,'epoch']+1
+     
+        epoch_offset = 40
+        # epoch_offset = df.loc[len(df)-1,'epoch']+1
         logger.write(f'starting from epoch {epoch_offset}')
     else:
         epoch_offset=0

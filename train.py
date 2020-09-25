@@ -5,7 +5,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from torch.utils.data import Dataset, DataLoader, Subset
-
+import matplotlib.pyplot as plt
 import numpy as np
 from tqdm import tqdm
 
@@ -51,6 +51,15 @@ def run_epoch(epoch, model, optimizer, loader, loss_computer, logger, csv_logger
                 )[1] # [1] returns logits
             else:
                 outputs = model(x)
+
+            # if is_training and (batch_idx) % log_every==0:
+            #     yyhats = outputs[:, 0].data.cpu().numpy() * (2.0 * y - 1.0).data.cpu().numpy()
+            #     colors = np.array(['blue', 'red', 'orange', 'green'])
+            #     plt.figure()
+            #     for i, yyhat in enumerate(yyhats):
+            #         plt.scatter([yyhat], [yyhat], c=colors[g[i].item()], s=3)
+            #     plt.savefig('/home/askarihr/scratch/GS/group_DRO/res/' + str(batch_idx) + '.png')
+            #     import ipdb; ipdb.set_trace()
 
             loss_main = loss_computer.loss(outputs, y, g, is_training)
 
@@ -104,6 +113,8 @@ def train(model, criterion, dataset,
         normalize_loss=args.use_normalized_loss,
         btl=args.btl,
         sp=args.sp,
+        sup=args.sup,
+        half=args.half,
         min_var_weight=args.minimum_variational_weight)
 
     # BERT uses its own scheduler and optimizer

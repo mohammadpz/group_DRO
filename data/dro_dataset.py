@@ -55,8 +55,19 @@ class DRODataset(Dataset):
             # to a reweighted ERM (weighted average where each (y,c) group has equal weight) .
             # When the --robust flag is set, reweighting does not change the loss function
             # since the minibatch is only used for mean gradient estimation for each group separately
+
+            # Male = 0, Blond_Hair = 0: n = 71629
+            # Male = 0, Blond_Hair = 1: n = 22880
+            # Male = 1, Blond_Hair = 0: n = 66874
+            # Male = 1, Blond_Hair = 1: n = 1387
+
             group_weights = len(self)/self._group_counts
+            # group_weights[0] *= 0.001
+            # group_weights[1] *= 0.499
+            # group_weights[2] *= 0.499
+            # group_weights[3] *= 0.001
             weights = group_weights[self._group_array]
+            # import ipdb; ipdb.set_trace()
 
             # Replacement needs to be set to True, otherwise we'll run out of minority samples
             sampler = WeightedRandomSampler(weights, len(self), replacement=True)
